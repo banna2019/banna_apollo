@@ -1,0 +1,15 @@
+spring:
+  ldap:
+    base: "dc=ybsa,dc=top"
+    username: "admin"
+    password: "ybsaqweqwe123"
+    searchFilter: "(uid={0})"
+    urls:
+    - "ldap://ldap.ybsa.top:389"
+
+ldap:
+  mapping:
+    objectClass: "inetOrgPerson"
+    loginId: "uid"
+    userDisplayName: "cn"
+    email: "mail"

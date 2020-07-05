@@ -1,0 +1,67 @@
+version: "3"
+services:
+  mysql-service:
+    container_name: mysql-service
+    image: mysql:5.7.30
+    hostname: mysql-service
+    restart: always
+    environment:
+     - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - /data/apollo/install/sql:/docker-entrypoint-initdb.d
+      - /data/apollo/mysql-data:/var/lib/mysql
+
+  apollo-configservice:
+    container_name: apollo-configservice
+    hostname: apollo-configservice
+    restart: always
+    image: apollo-configservice:v1.6.1
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-service
+    volumes:
+      - "/data/apollo/logs/100003171:/opt/logs/100003171"
+    environment:
+      - spring_datasource_url=jdbc:mysql://mysql-service:3306/ApolloConfigDB?characterEncoding=utf8
+      - spring_datasource_username=root
+      - spring_datasource_password=123456
+
+  apollo-adminservice:
+    container_name: apollo-adminservice
+    hostname: apollo-adminservice
+    restart: always
+    image: apollo-adminservice:v1.6.1
+    ports:
+      - "8090:8090"
+    depends_on:
+      - apollo-configservice
+      - mysql-service
+    volumes:
+      - "/data/apollo/logs/100003172:/opt/logs/100003172"
+    environment:
+      - spring_datasource_url=jdbc:mysql://mysql-service:3306/ApolloConfigDB?characterEncoding=utf8
+      - spring_datasource_username=root
+      - spring_datasource_password=123456
+
+  apollo-portal:
+    container_name: apollo-portal
+    hostname: apollo-portal
+    restart: always
+    image: apollo-portal:v1.6.1
+    ports:
+      - "8070:8070"
+    depends_on:
+      - apollo-configservice
+      - apollo-adminservice
+      - mysql-service
+    volumes:
+      - "/data/apollo/logs/100003173:/opt/logs/100003173"
+      #- "/data/apollo/config/apollo-env.properties:/apollo-portal/config/apollo-env.properties"
+    environment:
+      - JAVA_OPTS=-Ddev_meta=http://10.1.1.232:8080,-Dpro_meta=http://10.1.1.232:8080
+      - spring_datasource_url=jdbc:mysql://mysql-service:3306/ApolloPortalDB?characterEncoding=utf8
+      - spring_datasource_username=root
+      - spring_datasource_password=123456
