@@ -33,6 +33,7 @@ RUN mkdir /apollo-portal \
 RUN unzip /apollo-portal/apollo-portal-${VERSION}-github.zip -d /apollo-portal \
     && rm -rf /apollo-portal/apollo-portal-${VERSION}-github.zip \
     && sed -i '$d' /apollo-portal/scripts/startup.sh \
+    && sed -i '/ReduceInitialCardMarks/a export JAVA_OPTS="\$JAVA_OPTS -Dspring.profiles.active=github,ldap"' /apollo-portal/scripts/startup.sh \
     && chmod +x /apollo-portal/scripts/startup.sh \
     && echo "tail -f /dev/null" >> /apollo-portal/scripts/startup.sh
 

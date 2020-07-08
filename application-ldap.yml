@@ -1,7 +1,7 @@
 spring:
   ldap:
     base: "dc=ybsa,dc=top"
-    username: "admin"
+    username: "cn=admin,dc=ybsa,dc=top"
     password: "ybsaqweqwe123"
     searchFilter: "(uid={0})"
     urls:
